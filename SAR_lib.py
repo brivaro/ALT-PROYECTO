@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Optional, List, Union, Dict
 import pickle
+from spellsuggester import SpellSuggester
 
 ##################################################
 ##                                              ##
@@ -60,7 +61,11 @@ class SAR_Indexer:
         self.show_all = False # valor por defecto, se cambia con self.set_showall()
         self.show_snippet = False # valor por defecto, se cambia con self.set_snippet()
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
+        
         # ALT - COMPLETAR
+        self.use_spelling = False
+        self.speller = SpellSuggester(dist_functions = opcionesSpell, vocab = "./corpora/miniquijote.txt")
+        self.speller
 
     ###############################
     ###                         ###
@@ -114,7 +119,7 @@ class SAR_Indexer:
         """
         self.use_stemming = v
     
-
+    
 
 
     #############################################
@@ -284,7 +289,16 @@ class SAR_Indexer:
                 "threshold" entero, umbral del corrector
         """
         
-        # ALT - COMPLETAR        
+        # ALT - COMPLETAR
+        # 
+        # 
+        # 
+        # 
+        # 
+        #  
+
+        self.use_spelling = use_spelling
+
         pass
 
     def tokenize(self, text:str):
@@ -436,8 +450,15 @@ class SAR_Indexer:
         """
 
         # ALT - MODIFICAR
+        #
+        #
+        #
+        #
+        #
         term = term.lower()
         r1 = self.index[field].get(term, [])
+        if r1 == None:
+            self.speller
         return r1
 
 
