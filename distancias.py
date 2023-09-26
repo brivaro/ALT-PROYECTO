@@ -59,6 +59,20 @@ def levenshtein_edicion(x, y, threshold=None):
             camino.append(aux)
             i-= 1; j-=1 
             print(camino)
+            
+            """también se podía así pero a marta le gusta más como arriba
+
+            if i > 0 and D[i][j] == D[i - 1][j] + 1:
+                camino.append((x[i - 1], ''))  # Eliminación
+                i -= 1
+            elif j > 0 and D[i][j] == D[i][j-1] + 1:
+                camino.append(('', y[j - 1]))  # Inserción
+                j -= 1
+            else:
+                camino.append((x[i - 1], y[j - 1]))  # Sustitución o igualdad
+                i -= 1
+                j -= 1
+            """
 
     camino.reverse()  # Revertir la secuencia de edición
 
@@ -101,12 +115,17 @@ def levenshtein_reduccion(x, y, threshold=None):
 
 
 # Ejemplo de uso:
-distancia = levenshtein_reduccion("caas", "casa")
 distancia1,camino = levenshtein_edicion("ejemplo", "campos")
-print("Distancia de Levenshtein: caas, casa", distancia)
-print("-------------------------")
+distancia = levenshtein_reduccion("caas", "casa")
+print("-------------------------\n\r-------------------------")
+print("Levenstein EDICION (matriz con camino)")
 print("Distancia de Levenshtein: ejemplo, campos", distancia1)
 print("Secuencia de edición:", camino)
+print("-------------------------")
+print("Levenstein REDUCCION (vectores)")
+print("Distancia de Levenshtein: caas, casa", distancia)
+
+
 
 def levenshtein(x, y, threshold):
     # completar versión reducción coste espacial y parada por threshold
