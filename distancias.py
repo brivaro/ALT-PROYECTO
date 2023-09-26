@@ -4,7 +4,7 @@ def levenshtein_matriz(x, y, threshold=None):
     # esta versión no utiliza threshold, se pone porque se puede
     # invocar con él, en cuyo caso se ignora
     lenX, lenY = len(x), len(y)
-    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     for i in range(1, lenX + 1):
         D[i][0] = D[i - 1][0] + 1
     for j in range(1, lenY + 1):
@@ -20,7 +20,7 @@ def levenshtein_matriz(x, y, threshold=None):
 def levenshtein_edicion(x, y, threshold=None):
     # a partir de la versión levenshtein_matriz
     lenX, lenY = len(x), len(y)
-    D = np.zeros((lenX + 1, lenY + 1))
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     for i in range(1, lenX + 1):
         D[i][0] = D[i - 1][0] + 1
     for j in range(1, lenY + 1):
@@ -81,8 +81,8 @@ def levenshtein_edicion(x, y, threshold=None):
 def levenshtein_reduccion(x, y, threshold=None):
     # completar versión con reducción coste espacial
     lenX, lenY = len(x), len(y) #calcula la longitud de las palabras
-    prev = np.zeros(lenX + 1) #relleno a 0
-    current = np.zeros(lenX + 1) #relleno a 0
+    prev = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
+    current = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
 
     for i in range(1, lenX + 1):
         prev[i] = prev[i - 1] + 1 # inicializa a 1,2,3,4... los posiciones 
@@ -126,12 +126,11 @@ print("Levenstein REDUCCION (vectores)")
 print("Distancia de Levenshtein: caas, casa", distancia)
 
 
-
 def levenshtein(x, y, threshold):
     # completar versión reducción coste espacial y parada por threshold
     lenX, lenY = len(x), len(y) #calcula la longitud de las palabras
-    prev = np.zeros(lenX + 1) #relleno a 0
-    current = np.zeros(lenX + 1) #relleno a 0
+    prev = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
+    current = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
 
     for i in range(1, lenX + 1):
         prev[i] = prev[i - 1] + 1 # inicializa a 1,2,3,4... los posiciones 
@@ -158,7 +157,31 @@ print(dis)
 
 
 def levenshtein_cota_optimista(x, y, threshold):
-    return 0 # COMPLETAR Y REEMPLAZAR ESTA PARTE
+
+    dic = {}
+    for i in x:
+        if i not in dic: dic[i] = 1
+        else: dic[i]+=1
+    for i in y:
+        if i not in dic: dic[i] = -1
+        else: dic[i]-=1
+    
+    valores = dic.values()
+    valpos, valneg = 0,0 
+    for i in valores:
+        if i > 0:
+            valpos += i
+        else:
+            valneg += i
+
+    if (max(abs(valneg),valpos)) >= threshold: return threshold+1
+    else: return levenshtein(x,y,threshold)
+
+print("-------------------------")
+print("-------------------------")
+print("Levenstein matriz: ", levenshtein_matriz("casa","abad",None))
+print("Cota optimista con threshold = 5: ", levenshtein_cota_optimista("casa","abad",5))
+print("Cota optimista con threshold = 1: ", levenshtein_cota_optimista("casa","abad",1))
 
 def damerau_restricted_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein restringida con matriz
