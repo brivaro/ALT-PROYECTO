@@ -6,6 +6,7 @@ import time
 from SAR_lib import SAR_Indexer
 
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Index a directory with Wikipedia articles in json format.')

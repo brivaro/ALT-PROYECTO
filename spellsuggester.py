@@ -24,7 +24,7 @@ class SpellSuggester:
            default_threshold un entero positivo
 
         """
-        self.distance_functions = dist_functions
+        self.distance_functions = dist_functions        
         self.set_vocabulary(vocab)
         if default_distance is None:
             default_distance = 'levenshtein'
@@ -44,17 +44,17 @@ class SpellSuggester:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
             tokenizer (re.Pattern): expresión regular para la tokenización.
         """
-        tokenizer=re.compile("\W+")
+        tokenizer=re.compile("\W+") #coincide con uno o más caracteres no alfanuméricos (como espacios, comas, puntos, etc.) y se utiliza como delimitador para dividir el texto en palabras
         with open(vocab_file_path, "r", encoding="utf-8") as fr:
             vocab = set(tokenizer.split(fr.read().lower()))
-            vocab.discard("")  # por si acaso
+            vocab.discard("")  # por si acaso (se eliminan las posibles cadenas vacías si hay)
             return sorted(vocab)
 
     def set_vocabulary(self, vocabulary):
-        if isinstance(vocabulary,list):
+        if isinstance(vocabulary,list): #si es una lista
             self.vocabulary = vocabulary # atención! nos quedamos una referencia, a tener en cuenta
-        elif isinstance(vocabulary,str):
-            self.vocabulary = self.build_vocab(vocabulary)
+        elif isinstance(vocabulary,str): #si es un string
+            self.vocabulary = self.build_vocab(vocabulary)  #DUDA: no sería self.build_vocabulary(vocabulary)?            
         else:
             raise Exception("SpellSuggester incorrect vocabulary value")
 
@@ -73,12 +73,15 @@ class SpellSuggester:
             
         fdist = self.distance_functions[distance]
 
+
+        #resul es una lista de listas
         resul = [[] for i in range(threshold+1)] # hasta threshold inclusive
-        for w in self.vocabulary:
+        for w in self.vocabulary: #busca en el vocab todas las palaras q estan a una distancia del term <= threshold 
             d = fdist(term,w,threshold)
             if d <= threshold:
                 resul[d].append(w)
 
+        #convertimos resul en una lista, eliminamos las sublistas
         if flatten:
             resul = [word for wlist in resul for word in wlist]
             

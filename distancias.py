@@ -4,21 +4,66 @@ def levenshtein_matriz(x, y, threshold=None):
     # esta versión no utiliza threshold, se pone porque se puede
     # invocar con él, en cuyo caso se ignora
     lenX, lenY = len(x), len(y)
-    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int)
     for i in range(1, lenX + 1):
         D[i][0] = D[i - 1][0] + 1
     for j in range(1, lenY + 1):
         D[0][j] = D[0][j - 1] + 1
         for i in range(1, lenX + 1):
             D[i][j] = min(
-                D[i - 1][j] + 1,
-                D[i][j - 1] + 1,
-                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]),
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                #la letra en x y en y en la pos actual, será en la -1 de la pos de la matriz
+                #si es !=  +1
             )
+    #print("\n", D)
+    ## EJEMPLO:  dist(x,y) = dist(camarero, caramelos)
+    #      c a r a m e l o s
+    #  [[0 1 2 3 4 5 6 7 8 9]
+    # c [1 0 1 2 3 4 5 6 7 8]
+    # a [2 1 0 1 2 3 4 5 6 7]
+    # m [3 2 1 1 2 2 3 4 5 6]
+    # a [4 3 2 2 1 2 3 4 5 6]
+    # r [5 4 3 2 2 2 3 4 5 6]
+    # e [6 5 4 3 3 3 2 3 4 5]
+    # r [7 6 5 4 4 4 3 3 4 5]
+    # o [8 7 6 5 5 5 4 4 3 4]] 
+
+    # 1º se inicializa la primera columna
+    # 2º se va haciendo columna a col de arriba a abajo
+    # #
+    
     return D[lenX, lenY]
+
+
 
 def levenshtein_edicion(x, y, threshold=None):
     # a partir de la versión levenshtein_matriz
+    """
+    Devuelve la distancia y la secuencia de edición
+
+    AYUDA: Se obtiene la secuencia de operaciones de edición en sentido inverso.
+    Es más eficiente guardarlos con append y hacer un solo reverse al
+    finalizar (insertarlos al inicio es más ineficiente).
+
+    """
+
+    ## EJEMPLO BACKTRACKING
+    # 
+    #      c a m p o s
+    #  [[0 1 2 3 4 5 6]
+    # e [1 1 2 3 4 5 6]
+    # j [2 2 2 3 4 5 6]
+    # e [3 3 3 3 4 5 6]
+    # m [4 4 4 3 4 5 6]
+    # p [5 5 5 4 3 4 5]
+    # l [6 6 6 5 4 4 5]
+    # o [7 7 7 6 5 4 5]]
+    # 
+    #(orig, nueva)
+    #aplicar_edicion("ejemplo",[(’e’,’c’),(’j’,’a’),(’e’,’’),(’m’,’m’),(’p’,’p’),(’l’,’’),(’o’,’o’),(’’,’s’)]
+    # ##
     lenX, lenY = len(x), len(y)
     D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     for i in range(1, lenX + 1):
@@ -30,8 +75,8 @@ def levenshtein_edicion(x, y, threshold=None):
                 D[i - 1][j] + 1,
                 D[i][j - 1] + 1,
                 D[i - 1][j - 1] + (x[i - 1] != y[j - 1]),
-            )
-    print(D)
+            )   
+    
     camino = []
     i, j = lenX, lenY
     while i > 0 or j > 0:
@@ -39,28 +84,27 @@ def levenshtein_edicion(x, y, threshold=None):
         b = D[i][j-1]
         c =  D[i-1][j-1]
 
-        if a == min(a,b,c): # caso de Borrado
-            print("Entra borrado")
-            aux = (x[i-1], "")
-            camino.append(aux)
-            i -= 1
-            print(camino)
-
-        if b == min(a,b,c): # caso de Inserción
-            print("Entra insercion")
-            aux = ("",y[j-1])
-            camino.append(aux)
-            j -= 1
-            print(camino)
-
+        #MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
         if c == min(a,b,c): # caso de sustitución
-            print("Entra sustitucion")
             aux = (x[i-1], y[j-1])
             camino.append(aux)
             i-= 1; j-=1 
-            print(camino)
-            
-            """también se podía así pero a marta le gusta más como arriba
+            #print(camino)
+        elif a == min(a,b,c): # caso de Borrado
+            #eliminar pasa de arriba a bajo (se resta 1 fila)
+            aux = (x[i-1], "")
+            camino.append(aux)
+            i -= 1
+            #print(camino)
+        else:# b == min(a,b,c): # caso de Inserción
+            #insertar pasa de izq a der(se resta una columna)
+            aux = ("",y[j-1])
+            camino.append(aux)
+            j -= 1
+            #print(camino)
+        
+
+        """también se podía así pero a marta le gusta más como arriba
 
             if i > 0 and D[i][j] == D[i - 1][j] + 1:
                 camino.append((x[i - 1], ''))  # Eliminación
@@ -73,13 +117,11 @@ def levenshtein_edicion(x, y, threshold=None):
                 i -= 1
                 j -= 1
             """
-
-    camino.reverse()  # Revertir la secuencia de edición
-
-    return D[lenX, lenY],camino
+   
+    camino.reverse()
+    return D[lenX, lenY], camino # COMPLETAR Y REEMPLAZAR ESTA PARTE
 
 def levenshtein_reduccion(x, y, threshold=None):
-    # completar versión con reducción coste espacial
     lenX, lenY = len(x), len(y) #calcula la longitud de las palabras
     prev = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
     current = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
@@ -98,8 +140,6 @@ def levenshtein_reduccion(x, y, threshold=None):
     #           c      a      s      a    (eje x)
     #aqui abajo empezare con lo de levenstein
 
-    camino = []  # para almacenar la secuencia de edición
-
     for j in range(1, lenY + 1): #la palabra y en el eje y
         current[0] = prev[0] + 1 
         for i in range(1, lenX + 1): #la plabra x en el eje x
@@ -112,19 +152,6 @@ def levenshtein_reduccion(x, y, threshold=None):
         prev, current = current, prev  # Intercambiar los vectores
 
     return prev[lenX]
-
-
-# Ejemplo de uso:
-distancia1,camino = levenshtein_edicion("ejemplo", "campos")
-distancia = levenshtein_reduccion("caas", "casa")
-print("-------------------------\n\r-------------------------")
-print("Levenstein EDICION (matriz con camino)")
-print("Distancia de Levenshtein: ejemplo, campos", distancia1)
-print("Secuencia de edición:", camino)
-print("-------------------------")
-print("Levenstein REDUCCION (vectores)")
-print("Distancia de Levenshtein: caas, casa", distancia)
-
 
 def levenshtein(x, y, threshold):
     # completar versión reducción coste espacial y parada por threshold
@@ -147,17 +174,14 @@ def levenshtein(x, y, threshold):
             )
         prev, current = current, prev  # Intercambiar los vectores
 
-        if threshold is not None and prev[lenX] > threshold:
+        if threshold is not None and min(prev) > threshold:
             return threshold + 1
 
     return prev[lenX]
-
-dis = levenshtein("ejemplo", "campos", 4)
-print(dis)
-
+    
 
 def levenshtein_cota_optimista(x, y, threshold):
-
+    
     dic = {}
     for i in x:
         if i not in dic: dic[i] = 1
@@ -165,9 +189,10 @@ def levenshtein_cota_optimista(x, y, threshold):
     for i in y:
         if i not in dic: dic[i] = -1
         else: dic[i]-=1
-    
+
     valores = dic.values()
-    valpos, valneg = 0,0 
+    valpos = 0
+    valneg = 0 
     for i in valores:
         if i > 0:
             valpos += i
@@ -177,17 +202,11 @@ def levenshtein_cota_optimista(x, y, threshold):
     if (max(abs(valneg),valpos)) >= threshold: return threshold+1
     else: return levenshtein(x,y,threshold)
 
-print("-------------------------")
-print("-------------------------")
-print("Levenstein matriz: ", levenshtein_matriz("casa","abad",None))
-print("Cota optimista con threshold = 5: ", levenshtein_cota_optimista("casa","abad",5))
-print("Cota optimista con threshold = 1: ", levenshtein_cota_optimista("casa","abad",1))
-
 def damerau_restricted_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein restringida con matriz
     lenX, lenY = len(x), len(y)
     # COMPLETAR
-    return D[lenX, lenY]
+    return 0#D[lenX, lenY]
 
 def damerau_restricted_edicion(x, y, threshold=None):
     # partiendo de damerau_restricted_matriz añadir recuperar
@@ -200,7 +219,7 @@ def damerau_restricted(x, y, threshold=None):
 
 def damerau_intermediate_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein intermedia con matriz
-    return D[lenX, lenY]
+    return 0#D[lenX, lenY]
 
 def damerau_intermediate_edicion(x, y, threshold=None):
     # partiendo de matrix_intermediate_damerau añadir recuperar

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional, List, Union, Dict
 import pickle
 from spellsuggester import SpellSuggester
+from distancias import opcionesSpell
 
 ##################################################
 ##                                              ##
@@ -61,11 +62,18 @@ class SAR_Indexer:
         self.show_all = False # valor por defecto, se cambia con self.set_showall()
         self.show_snippet = False # valor por defecto, se cambia con self.set_snippet()
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
-        
         # ALT - COMPLETAR
-        self.use_spelling = False
-        self.speller = SpellSuggester(dist_functions = opcionesSpell, vocab = "./corpora/miniquijote.txt")
-        self.speller
+        #
+        
+        self.use_spelling = None
+        self.speller = None
+        
+        #
+        #
+        #
+        #
+        #
+        #
 
     ###############################
     ###                         ###
@@ -119,7 +127,7 @@ class SAR_Indexer:
         """
         self.use_stemming = v
     
-    
+
 
 
     #############################################
@@ -182,6 +190,9 @@ class SAR_Indexer:
         self.positional = args['positional']
         self.stemming = args['stem']
         self.permuterm = args['permuterm']
+
+        #
+        #args['distance']
 
         file_or_dir = Path(root)
         
@@ -289,17 +300,22 @@ class SAR_Indexer:
                 "threshold" entero, umbral del corrector
         """
         
-        # ALT - COMPLETAR
+        # ALT - COMPLETAR  
+        # #
+        # 
+        self.use_spelling = use_spelling         
+        self.speller = SpellSuggester(opcionesSpell,list(self.index.keys()),distance,threshold)    #vocab es una lista de palabras o la ruta de un fichero DUDA
         # 
         # 
         # 
         # 
         # 
-        #  
-
-        self.use_spelling = use_spelling
-
-        pass
+        # 
+        # 
+        # 
+        # 
+        #       
+        
 
     def tokenize(self, text:str):
         """
@@ -452,14 +468,22 @@ class SAR_Indexer:
         # ALT - MODIFICAR
         #
         #
-        #
-        #
-        #
+        lista = []
+        res=[]
         term = term.lower()
-        r1 = self.index[field].get(term, [])
-        if r1 == None:
-            self.speller
-        return r1
+        if term not in self.index: #si el termino no está buscamos otros aproximados
+           lista = self.speller.suggest(term,self.speller.default_distance,self.speller.default_threshold,True)#ultimo paramtro es el Flatten q poner True o Flase? lista de terminos que se parecen al termino
+           if len(lista) !=0: #si encontramos terminos parecidos
+               for t in lista: #sacamos la posting list de cada uno y las concatenamos a res
+                   r1 = self.index[field].get(t, []) #puede ser q una t no este en el indice??
+                   res+=r1
+            #si no se encuentran terminos parecidos que hacemos??
+        else: #si el termino esta devuelvo su posting list
+            res = self.index[field].get(term, [])
+        #
+          
+        
+        return res
 
 
     def reverse_posting(self, p:list):
