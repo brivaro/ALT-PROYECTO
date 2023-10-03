@@ -54,7 +54,7 @@ class SpellSuggester:
         if isinstance(vocabulary,list): #si es una lista
             self.vocabulary = vocabulary # atención! nos quedamos una referencia, a tener en cuenta
         elif isinstance(vocabulary,str): #si es un string
-            self.vocabulary = self.build_vocab(vocabulary)  #DUDA: no sería self.build_vocabulary(vocabulary)?            
+            self.vocabulary = self.build_vocabulary(vocabulary)  #DUDA: no sería self.build_vocabulary(vocabulary)?            
         else:
             raise Exception("SpellSuggester incorrect vocabulary value")
 
