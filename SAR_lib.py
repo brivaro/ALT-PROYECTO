@@ -65,7 +65,7 @@ class SAR_Indexer:
         # ALT - COMPLETAR
         #
         
-        self.use_spelling = None
+        self.use_spelling = False
         self.speller = None
         
         #
@@ -303,8 +303,11 @@ class SAR_Indexer:
         # ALT - COMPLETAR  
         # #
         # 
-        self.use_spelling = use_spelling         
-        self.speller = SpellSuggester(opcionesSpell,list(self.index.keys()),distance,threshold)    #vocab es una lista de palabras o la ruta de un fichero DUDA
+        self.use_spelling = use_spelling    
+        #print(opcionesSpell)
+        #print("----------------------------------\n")
+        #print(list(self.index["all"].keys()))     
+        self.speller = SpellSuggester(opcionesSpell,list(self.index["all"].keys()),distance,threshold)    #vocab es una lista de palabras o la ruta de un fichero DUDA
         # 
         # 
         # 
@@ -473,6 +476,7 @@ class SAR_Indexer:
         term = term.lower()
         if term not in self.index: #si el termino no está buscamos otros aproximados
            lista = self.speller.suggest(term,self.speller.default_distance,self.speller.default_threshold,True)#ultimo paramtro es el Flatten q poner True o Flase? lista de terminos que se parecen al termino
+           #print(lista) # EL ERROR ESTÁ AQUI -> devueve una lista vacía, no encuentra nada.
            if len(lista) !=0: #si encontramos terminos parecidos
                for t in lista: #sacamos la posting list de cada uno y las concatenamos a res
                    r1 = self.index[field].get(t, []) #puede ser q una t no este en el indice??
