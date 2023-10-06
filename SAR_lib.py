@@ -306,7 +306,7 @@ class SAR_Indexer:
         self.use_spelling = use_spelling    
         #print(opcionesSpell)
         #print("----------------------------------\n")
-        #print(list(self.index["all"].keys()))     
+        print(len(list(self.index["all"].keys())))     
         self.speller = SpellSuggester(opcionesSpell,list(self.index["all"].keys()),distance,threshold)    #vocab es una lista de palabras o la ruta de un fichero DUDA
         # 
         # 
@@ -469,22 +469,23 @@ class SAR_Indexer:
         """
 
         # ALT - MODIFICAR
-        #
+        # comprobar que se use el self.speller
         #
         lista = []
         res=[]
         #term = term.lower()
+        if self.use_spelling == True:
+            if term not in self.index[field]: #si el termino no está buscamos otros aproximados
+                lista = self.speller.suggest(term)#ultimo paramtro es el Flatten q poner True o Flase? lista de terminos que se parecen al termino
+                #print(lista) # EL ERROR ESTÁ AQUI -> devueve una lista vacía, no encuentra nada.
+                #if len(lista) !=0: #si encontramos terminos parecidos
+                for t in lista: #sacamos la posting list de cada uno y las concatenamos a res
+                    #print(t)
+                    r1 = self.index[field].get(t, []) #puede ser q una t no este en el indice??
+                    print(t, len(r1))
+                    res = self.or_posting(res, r1)
         
-        if term not in self.index: #si el termino no está buscamos otros aproximados
-           lista = self.speller.suggest(term,self.speller.default_distance,self.speller.default_threshold,True)#ultimo paramtro es el Flatten q poner True o Flase? lista de terminos que se parecen al termino
-           #print(lista) # EL ERROR ESTÁ AQUI -> devueve una lista vacía, no encuentra nada.
-           if len(lista) !=0: #si encontramos terminos parecidos
-               for t in lista: #sacamos la posting list de cada uno y las concatenamos a res
-                   print(t)
-                   r1 = self.index[field].get(t, []) #puede ser q una t no este en el indice??
-                   res = self.or_posting(res, r1)
-
-            #si no se encuentran terminos parecidos que hacemos??
+                #si no se encuentran terminos parecidos que hacemos??
         else: #si el termino esta devuelvo su posting list
             res = self.index[field].get(term, [])
         #
