@@ -9,7 +9,7 @@ def testear_suggester():
         "casa",
         "ancho",
         "ecrvantse",
-        "uqijoext",
+        "uqijoext"
     ]
     spellsuggester = SpellSuggester(
         dist_functions = opcionesSpell,

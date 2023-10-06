@@ -4,7 +4,7 @@ def levenshtein_matriz(x, y, threshold=None):
     # esta versión no utiliza threshold, se pone porque se puede
     # invocar con él, en cuyo caso se ignora
     lenX, lenY = len(x), len(y)
-    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     for i in range(1, lenX + 1):
         D[i][0] = D[i - 1][0] + 1
     for j in range(1, lenY + 1):
@@ -199,7 +199,8 @@ def levenshtein_cota_optimista(x, y, threshold):
         else:
             valneg += i
 
-    if (max(abs(valneg),valpos)) >= threshold: return threshold+1
+    if (max(abs(valneg),valpos)) > threshold: 
+        return threshold+1
     else: return levenshtein(x,y,threshold)
 
 def damerau_restricted_matriz(x, y, threshold=None):
