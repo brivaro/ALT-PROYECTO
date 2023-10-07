@@ -357,6 +357,20 @@ def damerau_restricted(x, y, threshold=None):
 
 def damerau_intermediate_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein intermedia con matriz
+    """
+        ESTO ES DE CHATGPT por si sirve
+        ECUACIÓN A SEGUIR:
+        D(i, j) = min(
+                        D(i - 1, j) + 1,               # Deletión
+                        D(i, j - 1) + 1,               # Inserción
+                        D(i - 1, j - 1) + cost(x[i], y[j]),  # Sustitución
+
+                        D(i - 2, j - 2) + 1,           # Transposición (ab ↔ ba)  +1
+                        D(i - 1, j - 2) + 2,           # Transposición (acb ↔ ba)  del+trans +2
+                        D(i - 2, j - 1) + 2,           # Transposición (ab ↔ bca)  trans+ins +2
+                    )
+
+    """
     lenX, lenY = len(x), len(y)
     # Definir los cuatro vectores columna en lugar de tres    
     prev = np.zeros((lenY + 1), dtype=np.int64)
@@ -394,21 +408,7 @@ def damerau_intermediate_edicion(x, y, threshold=None):
     
 def damerau_intermediate(x, y, threshold=None):
       # versión con reducción coste espacial y parada por threshold
-    """
-        ESTO ES DE CHATGPT
-        ECUACIÓN A SEGUIR:
-        D(i, j) = min(
-                        D(i - 1, j) + 1,               # Deletión
-                        D(i, j - 1) + 1,               # Inserción
-                        D(i - 1, j - 1) + cost(x[i], y[j]),  # Sustitución
-
-                        D(i - 2, j - 2) + 1,           # Transposición (ab ↔ ba)  +1
-                        D(i - 1, j - 2) + 2,           # Transposición (acb ↔ ba)  del+trans +2
-                        D(i - 2, j - 1) + 2,           # Transposición (ab ↔ bca)  trans+ins +2
-                    )
-
-    """
-
+    
     #TIENE QUE ESTAR INSPIRADO EN EL CODIGO DE MARTA:
     lenX, lenY = len(x), len(y)
     prev = np.zeros(lenX + 1, dtype=np.int64)
