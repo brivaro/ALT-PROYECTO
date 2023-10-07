@@ -393,8 +393,62 @@ def damerau_intermediate_edicion(x, y, threshold=None):
     return 0,[] # COMPLETAR Y REEMPLAZAR ESTA PARTE
     
 def damerau_intermediate(x, y, threshold=None):
-    # versión con reducción coste espacial y parada por threshold
-    return min(0,threshold+1) # COMPLETAR Y REEMPLAZAR ESTA PARTE
+      # versión con reducción coste espacial y parada por threshold
+    """
+        ESTO ES DE CHATGPT
+        ECUACIÓN A SEGUIR:
+        D(i, j) = min(
+                        D(i - 1, j) + 1,               # Deletión
+                        D(i, j - 1) + 1,               # Inserción
+                        D(i - 1, j - 1) + cost(x[i], y[j]),  # Sustitución
+
+                        D(i - 2, j - 2) + 1,           # Transposición (ab ↔ ba)  +1
+                        D(i - 1, j - 2) + 2,           # Transposición (acb ↔ ba)  del+trans +2
+                        D(i - 2, j - 1) + 2,           # Transposición (ab ↔ bca)  trans+ins +2
+                    )
+
+    """
+
+    #TIENE QUE ESTAR INSPIRADO EN EL CODIGO DE MARTA:
+    lenX, lenY = len(x), len(y)
+    prev = np.zeros(lenX + 1, dtype=np.int64)
+    current = np.zeros(lenX + 1, dtype=np.int64)
+    prev2 = np.zeros(lenX + 1, dtype=np.int64)
+    prev3 = np.zeros(lenX + 1, dtype=np.int64)
+
+    for i in range(1, lenX + 1):
+        prev[i] = prev[i - 1] + 1
+
+    for j in range(1, lenY + 1):
+        current[0] = prev[0] + 1
+        for i in range(1, lenX + 1):
+            cost = 0 if x[i - 1] == y[j - 1] else 1
+            deletion = prev[i] + 1
+            insertion = current[i - 1] + 1
+            substitution = prev[i - 1] + cost
+            current[i] = min(deletion, insertion, substitution)
+
+            if i > 1 and j > 1 and x[i - 1] == y[j - 2] and x[i - 2] == y[j - 1]:
+                transposition = prev2[i - 2] + 1
+                current[i] = min(current[i], transposition)
+
+            #TRANSPOSICION 1: DEL-TRAS
+            if i > 2 and j > 1 and x[i - 1] == y[j - 2] and x[i - 3] == y[j - 1]:
+                transposition1 = prev2[i - 3] + 2
+                current[i] = min(current[i], transposition1)
+
+            #TRANSPOSICION 2: TRAS-INS
+            if i > 1 and j > 2 and x[i - 1] == y[j - 3] and x[i - 2] == y[j - 1]:
+                transposition2 = prev3[i - 2] + 2
+                current[i] = min(current[i], transposition2)          
+
+        prev3, prev2, prev, current = prev2, prev, current, prev3
+        #prev2, prev, current = prev, current, prev2
+
+        if threshold is not None and min(prev) > threshold:
+            return threshold + 1
+
+    return prev[lenX]
 
 opcionesSpell = {
     'levenshtein_m': levenshtein_matriz,
