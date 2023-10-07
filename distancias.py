@@ -309,8 +309,6 @@ def damerau_restricted_edicion(x, y, threshold=None):
     return D[lenX, lenY], camino # COMPLETAR Y REEMPLAZAR ESTA PARTE
 
 
-    return 0,[] # COMPLETAR Y REEMPLAZAR ESTA PARTE
-
 def damerau_restricted(x, y, threshold=None):
     # versión con reducción coste espacial y parada por threshold
     lenX, lenY = len(x), len(y) #calcula la longitud de las palabras
@@ -372,33 +370,37 @@ def damerau_intermediate_matriz(x, y, threshold=None):
 
     """
     lenX, lenY = len(x), len(y)
-    # Definir los cuatro vectores columna en lugar de tres    
-    prev = np.zeros((lenY + 1), dtype=np.int64)
-    current = np.zeros((lenY + 1), dtype=np.int64)
-    prev_prev = np.zeros((lenY + 1), dtype=np.int64)
-    prev_prev_prev = np.zeros((lenY + 1), dtype=np.int64)
-
-    for i in range(1, lenY + 1):
-        prev[i] = prev[i - 1] + 1
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     
     for i in range(1, lenX + 1):
-        current[0] = prev[0] + 1
-        for j in range(1, lenY + 1):
+        D[i][0] = D[i - 1][0] + 1
+    
+    for j in range(1, lenY + 1):
+        D[0][j] = D[0][j - 1] + 1
+        
+        for i in range(1, lenX + 1):
             cost = 0 if x[i - 1] == y[j - 1] else 1
-            cost2 = 2  # Costo de transposición
-            current[j] = min(
-                prev[j] + 1,                        # Eliminación
-                current[j - 1] + 1,                 # Inserción
-                prev[j - 1] + cost,                 # Sustitución o coincidencia
-                prev_prev_prev[j - 2] + cost2 if i > 1 and j > 1 and x[i - 1] == y[j - 2] and x[i - 2] == y[j - 1] else float('inf')  # Transposición
-            )
-        prev_prev_prev, prev_prev, prev, current = prev_prev, prev, current, prev_prev_prev  # Actualizar los vectores
+            #costaux = 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else cost
+            if i > 2 and j > 2 and ((x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2]) or (x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3])):
+                cost2 = 2
+                D[i][j] = min(
+                        D[i - 1][j] + 1,                # Eliminación
+                        D[i][j - 1] + 1,                # Inserción
+                        D[i - 1][j - 1] + cost,         # Sustitución o coincidencia
+                        D[i - 2][j - 2] + cost2         # Transposición
+                )
+            else:
+                D[i][j] = min(
+                        D[i - 1][j] + 1,                # Eliminación
+                        D[i][j - 1] + 1,                # Inserción
+                        D[i - 1][j - 1] + cost,         # Sustitución o coincidencia
+                )
 
         # Comprobar el umbral
-        if threshold is not None and min(prev) > threshold:
+        if threshold is not None and min(D[i]) > threshold:
             return threshold + 1
 
-    return prev[lenY]
+    return D[lenX][lenY]
 
 def damerau_intermediate_edicion(x, y, threshold=None):
     # partiendo de matrix_intermediate_damerau añadir recuperar
