@@ -205,18 +205,155 @@ def levenshtein_cota_optimista(x, y, threshold):
 
 def damerau_restricted_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein restringida con matriz
+
     lenX, lenY = len(x), len(y)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
+    for i in range(1, lenX + 1):
+        D[i][0] = D[i - 1][0] + 1
+    for j in range(1, lenY + 1):
+        D[0][j] = D[0][j - 1] + 1
+        for i in range(1, lenX + 1):
+            if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-2] + 1
+                )
+            else:
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+            )
+
     # COMPLETAR
-    return 0#D[lenX, lenY]
+    return D[lenX, lenY]
 
 def damerau_restricted_edicion(x, y, threshold=None):
     # partiendo de damerau_restricted_matriz añadir recuperar
     # secuencia de operaciones de edición
+
+    lenX, lenY = len(x), len(y)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
+    for i in range(1, lenX + 1):
+        D[i][0] = D[i - 1][0] + 1
+    for j in range(1, lenY + 1):
+        D[0][j] = D[0][j - 1] + 1
+        for i in range(1, lenX + 1):
+            if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-2] + 1
+                )
+            else:
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+            )
+    
+    camino = []
+    i, j = lenX, lenY
+    while i > 0 or j > 0:
+        a = D[i-1][j]
+        b = D[i][j-1]
+        c =  D[i-1][j-1]
+        d = D[i-2][j-2]
+
+        #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
+        if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
+            if d == min(a, b, c, d):
+                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1]))
+                camino.append(aux)
+                i-=2; j-=2
+                continue
+
+        if c == min(a,b,c): # caso de sustitución
+            aux = (x[i-1], y[j-1])
+            camino.append(aux)
+            i-= 1; j-=1 
+            #print(camino)
+        elif a == min(a,b,c): # caso de Borrado
+            #eliminar pasa de arriba a bajo (se resta 1 fila)
+            aux = (x[i-1], "")
+            camino.append(aux)
+            i -= 1
+            #print(camino)
+        else:# b == min(a,b,c): # caso de Inserción
+            #insertar pasa de izq a der(se resta una columna)
+            aux = ("",y[j-1])
+            camino.append(aux)
+            j -= 1
+            #print(camino)
+
+
+
+        """también se podía así pero a marta le gusta más como arriba
+
+            if i > 0 and D[i][j] == D[i - 1][j] + 1:
+                camino.append((x[i - 1], ''))  # Eliminación
+                i -= 1
+            elif j > 0 and D[i][j] == D[i][j-1] + 1:
+                camino.append(('', y[j - 1]))  # Inserción
+                j -= 1
+            else:
+                camino.append((x[i - 1], y[j - 1]))  # Sustitución o igualdad
+                i -= 1
+                j -= 1
+            """
+   
+    camino.reverse()
+    return D[lenX, lenY], camino # COMPLETAR Y REEMPLAZAR ESTA PARTE
+
+
     return 0,[] # COMPLETAR Y REEMPLAZAR ESTA PARTE
 
 def damerau_restricted(x, y, threshold=None):
     # versión con reducción coste espacial y parada por threshold
-     return min(0,threshold+1) # COMPLETAR Y REEMPLAZAR ESTA PARTE
+    lenX, lenY = len(x), len(y) #calcula la longitud de las palabras
+    prev_2 = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
+    prev = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
+    current = np.zeros(lenX + 1, dtype=np.int64) #relleno a 0
+
+    for i in range(1, lenX + 1):
+        prev[i] = prev[i - 1] + 1 # inicializa a 1,2,3,4... los posiciones 
+                                  # menos la 0 qua ya estaba rellenada por np.zeros
+
+    for j in range(1, lenY + 1): #la palabra y en el eje y
+        current[0] = prev[0] + 1 
+        for i in range(1, lenX + 1): #la plabra x en el eje x
+
+            cost = 0 if x[i - 1] == y[j - 1] else 1
+            
+            if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
+                current[i] = min(
+                    prev[i] + 1, #coste de eliminacion
+                    current[i - 1] + 1, #coste de insercion
+                    prev[i - 1] + cost, # coste de no edicion
+                    prev_2[i-2] + cost
+                )
+            else:
+                current[i] = min(
+                    prev[i] + 1, #coste de eliminacion
+                    current[i - 1] + 1, #coste de insercion
+                    prev[i - 1] + cost # coste de no edicion
+                )
+        #print(prev_2)
+        #print(prev)
+        #print(current)
+        #print("-----------\n")
+        
+        prev_2 = prev
+        prev = current
+        if j < lenY: current = np.zeros(lenX + 1, dtype=np.int64)
+
+        if threshold is not None and min(prev) > threshold:
+            return threshold + 1
+    
+    return prev[lenX] # COMPLETAR Y REEMPLAZAR ESTA PARTE
 
 def damerau_intermediate_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein intermedia con matriz
@@ -276,3 +413,4 @@ opcionesEdicion = {
     'damerau_i':   damerau_intermediate_edicion
 }
 
+#damerau_restricted("acb", "ba")
