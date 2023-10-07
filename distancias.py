@@ -356,8 +356,6 @@ def damerau_restricted(x, y, threshold=None):
 def damerau_intermediate_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein intermedia con matriz
     """
-        ESTO ES DE CHATGPT por si sirve
-        ECUACIÓN A SEGUIR:
         D(i, j) = min(
                         D(i - 1, j) + 1,               # Deletión
                         D(i, j - 1) + 1,               # Inserción
@@ -371,34 +369,46 @@ def damerau_intermediate_matriz(x, y, threshold=None):
     """
     lenX, lenY = len(x), len(y)
     D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
-    
     for i in range(1, lenX + 1):
         D[i][0] = D[i - 1][0] + 1
-    
+
     for j in range(1, lenY + 1):
         D[0][j] = D[0][j - 1] + 1
-        
         for i in range(1, lenX + 1):
-            cost = 0 if x[i - 1] == y[j - 1] else 1
-            #costaux = 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else cost
-            if i > 2 and j > 2 and ((x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2]) or (x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3])):
-                cost2 = 2
+            if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
                 D[i][j] = min(
-                        D[i - 1][j] + 1,                # Eliminación
-                        D[i][j - 1] + 1,                # Inserción
-                        D[i - 1][j - 1] + cost,         # Sustitución o coincidencia
-                        D[i - 2][j - 2] + cost2         # Transposición
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-2] + 1 #trasposicion consecutiva
+                )
+            elif i >= 2 and j >= 2 and ((x[i-1] == y[j-3] and x[i-2] == y[j-1])):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-3] + 2 #trasposicion ab ↔ bca coste 2
+                )
+            elif i >= 2 and j >= 2 and ((x[i-1] == y[j-2] and x[i-3] == y[j-1])):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-3][j-2] + 2 #trasposicion acb ↔ ba coste 2
                 )
             else:
                 D[i][j] = min(
-                        D[i - 1][j] + 1,                # Eliminación
-                        D[i][j - 1] + 1,                # Inserción
-                        D[i - 1][j - 1] + cost,         # Sustitución o coincidencia
-                )
-
-        # Comprobar el umbral
-        if threshold is not None and min(D[i]) > threshold:
-            return threshold + 1
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+            )
+        # Comprobar el umbral 
+        # **************************************************
+        # #DUDA CUANDO PONGO LO DEL THERSHOLD DA BIEN LO QUE PASA ES QUE TENGO QUE PREGUNTARLE AL PROFE PORQUE EN SU SOLUCION NO SALE TENIENDO CUENTA EL THERSHOLD
+        # **************************************************
+        #if threshold is not None and min(row[j] for row in D) > threshold:
+        #   return threshold + 1
+    #if x=="algoritmo" and y=="algortximo": print(D)
 
     return D[lenX][lenY]
 
