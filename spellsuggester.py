@@ -19,7 +19,7 @@ class SpellSuggester:
 
         Args:
            dist_functions es un diccionario nombre->funcion_distancia
-           vocab es una lista de palabras o la ruta de un fichero
+           vocab es una lista de palabras o la ruta de un fichero //DUDA
            default_distance debe ser una clave de dist_functions
            default_threshold un entero positivo
 
@@ -54,7 +54,7 @@ class SpellSuggester:
         if isinstance(vocabulary,list): #si es una lista
             self.vocabulary = vocabulary # atención! nos quedamos una referencia, a tener en cuenta
         elif isinstance(vocabulary,str): #si es un string
-            self.vocabulary = self.build_vocabulary(vocabulary)  #DUDA: no sería self.build_vocabulary(vocabulary)?            
+            self.vocabulary = self.build_vocabulary(vocabulary)  #DUDA: Este es el caso si es una ruta de fichero, ya estaría cubierto este caso?         
         else:
             raise Exception("SpellSuggester incorrect vocabulary value")
 
@@ -79,7 +79,7 @@ class SpellSuggester:
         for w in self.vocabulary: #busca en el vocab todas las palaras q estan a una distancia del term <= threshold 
             d = fdist(term,w,threshold)
             if d <= threshold:
-                resul[d].append(w)
+                resul[d].append(w)#devuelve en la pos equivalente a su dist, la palabra w
 
         #convertimos resul en una lista, eliminamos las sublistas
         if flatten:

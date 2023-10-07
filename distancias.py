@@ -1,8 +1,7 @@
 import numpy as np
 
 def levenshtein_matriz(x, y, threshold=None):
-    # esta versión no utiliza threshold, se pone porque se puede
-    # invocar con él, en cuyo caso se ignora
+    # esta versión no utiliza threshold, se pone porque se puede invocar con él, en cuyo caso se ignora
     lenX, lenY = len(x), len(y)
     D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
     for i in range(1, lenX + 1):
@@ -84,7 +83,7 @@ def levenshtein_edicion(x, y, threshold=None):
         b = D[i][j-1]
         c =  D[i-1][j-1]
 
-        #MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
+        #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
         if c == min(a,b,c): # caso de sustitución
             aux = (x[i-1], y[j-1])
             camino.append(aux)
@@ -172,6 +171,7 @@ def levenshtein(x, y, threshold):
                 current[i - 1] + 1, #coste de insercion
                 prev[i - 1] + cost # coste de no edicion
             )
+        
         prev, current = current, prev  # Intercambiar los vectores
 
         if threshold is not None and min(prev) > threshold:
