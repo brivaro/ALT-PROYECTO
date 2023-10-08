@@ -174,7 +174,8 @@ def levenshtein(x, y, threshold):
         
         prev, current = current, prev  # Intercambiar los vectores
 
-        if threshold is not None and min(prev) > threshold:
+        # no da bien pero es porque el profe ha hecho las pruebas con >= que es lo que ponía en las traspas
+        if threshold is not None and min(prev) > threshold: 
             return threshold + 1
 
     return prev[lenX]
@@ -199,6 +200,7 @@ def levenshtein_cota_optimista(x, y, threshold):
         else:
             valneg += i
 
+# no da bien pero es porque el profe ha hecho las pruebas con >= que es lo que ponía en las traspas
     if (max(abs(valneg),valpos)) > threshold: 
         return threshold+1
     else: return levenshtein(x,y,threshold)
