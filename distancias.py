@@ -16,6 +16,7 @@ def levenshtein_matriz(x, y, threshold=None):
                 #la letra en x y en y en la pos actual, será en la -1 de la pos de la matriz
                 #si es !=  +1
             )
+
     #print("\n", D)
     ## EJEMPLO:  dist(x,y) = dist(camarero, caramelos)
     #      c a r a m e l o s
@@ -200,7 +201,7 @@ def levenshtein_cota_optimista(x, y, threshold):
         else:
             valneg += i
 
-# no da bien pero es porque el profe ha hecho las pruebas con >= que es lo que ponía en las traspas
+# no da bien pero es porque el profe ha hecho las pruebas con >= que es lo que ponía en las traspas 
     if (max(abs(valneg),valpos)) > threshold: 
         return threshold+1
     else: return levenshtein(x,y,threshold)
@@ -411,14 +412,133 @@ def damerau_intermediate_matriz(x, y, threshold=None):
         #if threshold is not None and min(row[j] for row in D) > threshold:
         #   return threshold + 1
     #if x=="algoritmo" and y=="algortximo": print(D)
-
     return D[lenX][lenY]
 
+
+
+'''
+    Método de Adrián NO LO TOQUÉIS. LO TERMINARÉ MAÑANA DÍA 9/10/23
+'''
 def damerau_intermediate_edicion(x, y, threshold=None):
     # partiendo de matrix_intermediate_damerau añadir recuperar
     # secuencia de operaciones de edición
     # completar versión Damerau-Levenstein intermedia con matriz
-    return 0,[] # COMPLETAR Y REEMPLAZAR ESTA PARTE
+
+    lenX, lenY = len(x), len(y)
+    D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
+    for i in range(1, lenX + 1):
+        D[i][0] = D[i - 1][0] + 1
+
+    for j in range(1, lenY + 1):
+        D[0][j] = D[0][j - 1] + 1
+        for i in range(1, lenX + 1):
+            if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-2] + 1 #trasposicion consecutiva
+                )
+            elif i >= 2 and j >= 2 and ((x[i-1] == y[j-3] and x[i-2] == y[j-1])):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-2][j-3] + 2 #trasposicion ab ↔ bca coste 2
+                )
+            elif i >= 2 and j >= 2 and ((x[i-1] == y[j-2] and x[i-3] == y[j-1])):
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+                D[i-3][j-2] + 2 #trasposicion acb ↔ ba coste 2
+                )
+            else:
+                D[i][j] = min(
+                D[i - 1][j] + 1, #ELIMINACIÓN (pasa de arriba a abajo)
+                D[i][j - 1] + 1, #INSERCIÓN (pasa de izq a der ->)
+                D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
+            )
+
+    print(x,y,'\n',D)
+
+    camino = []
+
+    i, j = lenX, lenY
+    while i > 0 or j > 0:
+
+
+
+        a = D[i-1][j]       #borrado
+        b = D[i][j-1]       #insercion
+        c = D[i-1][j-1]    #sustitucion
+
+        # no deberia hacer comprobaciones?
+        d = D[i-2][j-2]     #ab ↔ ba coste 1
+        e = D[i-2][j-1]     #acb ↔ ba coste 2
+        f = D[i-1][j-2]     #ab ↔ bca coste 2
+
+        #print(min(a,b,c,d,e,f))
+        print('-------------------------')
+        
+        if c == min(a,b,c,d,e,f): print(c,'c', 'sustitucion')
+        elif a == min(a,b,c,d,e,f): print(a,'a', 'borrado')
+        elif b == min(a,b,c,d,e,f): print(b,'b', 'insercion')
+
+        elif i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]) and d == min(a,b,c,d,e,f): print(d,'d','ab ↔ ba')
+        elif i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]) and e == min(a,b,c,d,e,f): print(e,'e','acb ↔ ba')
+        elif j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]) and f == min(a,b,c,d,e,f): print(f,'f','ab ↔ bca')
+
+        #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag #DUDA x2
+        if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]): #ab ↔ ba coste 1
+            if d == min(a, b, c, d):
+                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #está mal lo hago mañana no preocuparse
+                camino.append(aux)
+                i-=2; j-=2
+                print('ab ↔ ba')
+                continue
+
+        if i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]): #acb ↔ ba coste 2
+            if e == min(a, b, c, e):
+                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1]))
+                camino.append(aux)
+                i-=2; j-=1
+                print('acb ↔ ba')
+                continue
+
+        if j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]): #ab ↔ bca coste 2
+            if f == min(a, b, c, f):
+                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #está mal lo hago mañana no preocuparse
+                camino.append(aux)
+                i-=1; j-=2
+                print('ab ↔ bca')
+                continue
+
+        if c == min(a,b,c): # caso de sustitución
+            aux = (x[i-1], y[j-1])   #está mal lo hago mañana no preocuparse
+            camino.append(aux)
+            i-= 1; j-=1 
+            #print(camino)
+        elif a == min(a,b,c): # caso de Borrado
+            #eliminar pasa de arriba a bajo (se resta 1 fila)
+            aux = (x[i-1], "")
+            camino.append(aux)
+            i -= 1
+            #print(camino)
+        else: # b == min(a,b,c): # caso de Inserción
+            #insertar pasa de izq a der(se resta una columna)
+            aux = ("",y[j-1])
+            camino.append(aux)
+            j -= 1
+            #print(camino)
+
+        
+   
+    camino.reverse()
+    
+
+
+    return D[lenX][lenY],camino # COMPLETAR Y REEMPLAZAR ESTA PARTE
     
 def damerau_intermediate(x, y, threshold=None):
       # versión con reducción coste espacial y parada por threshold
