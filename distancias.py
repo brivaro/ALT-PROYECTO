@@ -416,10 +416,6 @@ def damerau_intermediate_matriz(x, y, threshold=None):
     return D[lenX][lenY]
 
 
-
-'''
-    Método de Adrián NO LO TOQUÉIS. LO TERMINARÉ MAÑANA DÍA 9/10/23
-'''
 def damerau_intermediate_edicion(x, y, threshold=None):
     # partiendo de matrix_intermediate_damerau añadir recuperar
     # secuencia de operaciones de edición
