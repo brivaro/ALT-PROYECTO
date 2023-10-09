@@ -269,7 +269,7 @@ def damerau_restricted_edicion(x, y, threshold=None):
         #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
         if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
             if d == min(a, b, c, d):
-                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1]))
+                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #NOTA PARA MARTA DE ADRIÁN: no tendría sentido poner todas las x en un lado y las y en otro? aunque son equivalentes x-->y
                 camino.append(aux)
                 i-=2; j-=2
                 continue
@@ -505,15 +505,10 @@ def damerau_intermediate_edicion(x, y, threshold=None):
         else: # b == min(a,b,c): # caso de Inserción
             aux = ("",y[j-1])
             camino.append(aux)
-            j -= 1
-
-    print(camino, "i:", i, "j:", j)
-    
+            j -= 1    
    
     camino.reverse()
     
-
-
     return D[lenX][lenY],camino # COMPLETAR Y REEMPLAZAR ESTA PARTE
     
 def damerau_intermediate(x, y, threshold=None):
