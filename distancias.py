@@ -408,6 +408,7 @@ def damerau_intermediate_matriz(x, y, threshold=None):
         # Comprobar el umbral 
         # **************************************************
         # #DUDA CUANDO PONGO LO DEL THERSHOLD DA BIEN LO QUE PASA ES QUE TENGO QUE PREGUNTARLE AL PROFE PORQUE EN SU SOLUCION NO SALE TENIENDO CUENTA EL THERSHOLD
+        # Recordar que si se modifica esto, hay que modificar el método de abajo
         # **************************************************
         #if threshold is not None and min(row[j] for row in D) > threshold:
         #   return threshold + 1
@@ -481,13 +482,13 @@ def damerau_intermediate_edicion(x, y, threshold=None):
             i-=2; j-=2
             continue
 
-        if i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]) and e == min(a, b, c, e): #acb ↔ ba coste 2
+        if i > 2 and j > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]) and e == min(a, b, c, e): #acb ↔ ba coste 2
             aux = ((x[i-3]+x[i-2]+x[i-1]) , (y[j-2]+y[j-1])) 
             camino.append(aux)
             i-=3; j-=2
             continue
 
-        if j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]) and  f == min(a, b, c, f): #ab ↔ bca coste 2
+        if i > 1 and j > 2 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]) and  f == min(a, b, c, f): #ab ↔ bca coste 2
             aux = ((x[i-2]+x[i-1]) , (y[j-3]+y[j-2]+y[j-1])) 
             camino.append(aux)
             i-=2; j-=3
