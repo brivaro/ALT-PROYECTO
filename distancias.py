@@ -422,7 +422,7 @@ def damerau_intermediate_matriz(x, y, threshold=None):
 def damerau_intermediate_edicion(x, y, threshold=None):
     # partiendo de matrix_intermediate_damerau añadir recuperar
     # secuencia de operaciones de edición
-    # completar versión Damerau-Levenstein intermedia con matriz
+    # completar versión Damerau-Levenstein intermedia con matriz    
 
     lenX, lenY = len(x), len(y)
     D = np.zeros((lenX + 1, lenY + 1), dtype=np.int64)
@@ -460,79 +460,55 @@ def damerau_intermediate_edicion(x, y, threshold=None):
                 D[i - 1][j - 1] + (x[i - 1] != y[j - 1]), #SUSTITUCIÓN (pasa en diagonal)
             )
 
-    print(x,y,'\n',D)
-
     camino = []
 
     i, j = lenX, lenY
     while i > 0 or j > 0:
 
-
-
         a = D[i-1][j]       #borrado
         b = D[i][j-1]       #insercion
         c = D[i-1][j-1]    #sustitucion
 
-        # no deberia hacer comprobaciones?
         d = D[i-2][j-2]     #ab ↔ ba coste 1
         e = D[i-2][j-1]     #acb ↔ ba coste 2
         f = D[i-1][j-2]     #ab ↔ bca coste 2
 
-        #print(min(a,b,c,d,e,f))
-        print('-------------------------')
-        
-        if c == min(a,b,c,d,e,f): print(c,'c', 'sustitucion')
-        elif a == min(a,b,c,d,e,f): print(a,'a', 'borrado')
-        elif b == min(a,b,c,d,e,f): print(b,'b', 'insercion')
-
-        elif i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]) and d == min(a,b,c,d,e,f): print(d,'d','ab ↔ ba')
-        elif i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]) and e == min(a,b,c,d,e,f): print(e,'e','acb ↔ ba')
-        elif j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]) and f == min(a,b,c,d,e,f): print(f,'f','ab ↔ bca')
 
         #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag #DUDA x2
-        if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]): #ab ↔ ba coste 1
-            if d == min(a, b, c, d):
-                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #está mal lo hago mañana no preocuparse
-                camino.append(aux)
-                i-=2; j-=2
-                print('ab ↔ ba')
-                continue
+        if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]) and d == min(a, b, c, d): #ab ↔ ba coste 1
+            aux = ((x[i-2]+x[i-1]) , (y[j-2]+y[j-1])) 
+            camino.append(aux)
+            i-=2; j-=2
+            continue
 
-        if i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]): #acb ↔ ba coste 2
-            if e == min(a, b, c, e):
-                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1]))
-                camino.append(aux)
-                i-=2; j-=1
-                print('acb ↔ ba')
-                continue
+        if i > 1 and (x[i-3] == y[j-1] and x[i-1] == y[j-2]) and e == min(a, b, c, e): #acb ↔ ba coste 2
+            aux = ((x[i-3]+x[i-2]+x[i-1]) , (y[j-2]+y[j-1])) 
+            camino.append(aux)
+            i-=3; j-=2
+            continue
 
-        if j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]): #ab ↔ bca coste 2
-            if f == min(a, b, c, f):
-                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #está mal lo hago mañana no preocuparse
-                camino.append(aux)
-                i-=1; j-=2
-                print('ab ↔ bca')
-                continue
+        if j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-3]) and  f == min(a, b, c, f): #ab ↔ bca coste 2
+            aux = ((x[i-2]+x[i-1]) , (y[j-3]+y[j-2]+y[j-1])) 
+            camino.append(aux)
+            i-=2; j-=3
+            continue
 
         if c == min(a,b,c): # caso de sustitución
-            aux = (x[i-1], y[j-1])   #está mal lo hago mañana no preocuparse
+            aux = (x[i-1], y[j-1])   
             camino.append(aux)
             i-= 1; j-=1 
-            #print(camino)
+
         elif a == min(a,b,c): # caso de Borrado
-            #eliminar pasa de arriba a bajo (se resta 1 fila)
             aux = (x[i-1], "")
             camino.append(aux)
             i -= 1
-            #print(camino)
         else: # b == min(a,b,c): # caso de Inserción
-            #insertar pasa de izq a der(se resta una columna)
             aux = ("",y[j-1])
             camino.append(aux)
             j -= 1
-            #print(camino)
 
-        
+    print(camino, "i:", i, "j:", j)
+    
    
     camino.reverse()
     
