@@ -1,0 +1,38 @@
+  ori-  levenshtein damerau_r   damerau_i
+ginal 1   2   3   1   2   3   1   2   3 query
+----------------------------------------------------------------------
+  0 215 275 397 215 275 397 215 275 397 alexanderx
+  0  27  27 111  27  27 117  27  27 117 iluminaciónx
+  0  59 354 862 276 354 867 276 354 867 capitla
+  0  19  27 266  19 234 268  19 234 268 secuelax
+  0   0   3 576   0   3 576   0   3 576 asoman2
+  0   0 352 1182   0 352 1184   0 352 1185 virneg
+  0  34  96 550  34 118 680  34 118 680 perwisos
+  0   0  76 824   0  76 894   0  76 894 persimos
+  0 176 176 697 176 176 702 176 176 702 limertad
+  0   0 164 1003  17 195 1023  17 195 1023 sagardo
+  0 100 103 152 100 103 153 100 103 153 aperturaq
+  0   0  90 600   0  90 600   0  90 601 loursed
+  0 475 987 1235 475 987 1235 475 987 1235 cuaqro
+  0 173 360 1314 173 360 1314 173 360 1314 planrta
+196 196 196 191 196 194 191 196 194 191 NOT antihéroes AND ecuador
+  0   0   0   1   0   0   1   0   0   1 blindarse OR árboles AND perjuicio
+  0  53  59  81  53  60  81  53  60  81 orígenes AND aversión
+375 375 356 178 375 356 176 375 356 176 actualmente AND NOT reubicar
+  0   0 193 585   0 193 585   0 193 586 ventanasse OR rebuscar
+  5  10  57 227  10  68 228  10  68 228 tortuosa OR atardecer
+ 16  16  16  16  16  16  16  16  16  16 NOT alexander AND iluminación
+  0   1 121 262   1 124 262   1 124 262 capital OR secuela AND asoman
+  0   0   0   0   0   0   0   0   0   0 virgen AND permisos
+169 169 169 169 169 169 169 169 169 169 libertad AND NOT sagrado
+113 113 113 113 113 113 113 113 113 113 apertura OR lourdes
+  0 196 196 356 196 196 372 196 196 372 NOT antihreoes AND ecuadorr
+  0   0   4  14   2   6  18   2   6  18 blindase OR árbolse AND perjuicioso
+  0   0   0   4   0   0   4   0   0   4 diógenes AND avrasión
+  0   0 325 218 374 325 225 374 325 225 actulamente AND NOT rubricar
+  0   0   0 124   0   0 125   0   0 125 ventanasseu OR rebuscardo
+  0   0  28 153   0  28 153   0  28 153 tortugosa OR atrasdecer
+  0  16  15  54  16  15  55  16  15  55 NOT alexanders AND iluminaciónx
+174 208 428 883 364 428 888 364 428 888 capitla OR escuela
+  0   0  36 526   0  67 646   0  67 646 wirgen AND perwisos
+176 176 176 176 176 176 176 176 176 176 libertad AND NOT sangrado
