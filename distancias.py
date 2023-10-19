@@ -89,19 +89,16 @@ def levenshtein_edicion(x, y, threshold=None):
             aux = (x[i-1], y[j-1])
             camino.append(aux)
             i-= 1; j-=1 
-            #print(camino)
         elif a == min(a,b,c): # caso de Borrado
             #eliminar pasa de arriba a bajo (se resta 1 fila)
             aux = (x[i-1], "")
             camino.append(aux)
             i -= 1
-            #print(camino)
         else:# b == min(a,b,c): # caso de Inserción
             #insertar pasa de izq a der(se resta una columna)
             aux = ("",y[j-1])
             camino.append(aux)
             j -= 1
-            #print(camino)
         
 
         """también se podía así pero a marta le gusta más como arriba
@@ -142,12 +139,12 @@ def levenshtein_reduccion(x, y, threshold=None):
 
     for j in range(1, lenY + 1): #la palabra y en el eje y
         current[0] = prev[0] + 1 
-        for i in range(1, lenX + 1): #la plabra x en el eje x
+        for i in range(1, lenX + 1): #la palabra x en el eje x
             cost = 0 if x[i - 1] == y[j - 1] else 1
             current[i] = min(
-                prev[i] + 1, #coste de eliminacion
-                current[i - 1] + 1, #coste de insercion
-                prev[i - 1] + cost # coste de no edicion
+                prev[i] + 1, #coste de eliminación
+                current[i - 1] + 1, #coste de inserción
+                prev[i - 1] + cost # coste de no edición
             )
         prev, current = current, prev  # Intercambiar los vectores
 
@@ -269,7 +266,7 @@ def damerau_restricted_edicion(x, y, threshold=None):
         #DUDA: MAL no hay q usar el mínimo, mejor comprobar lo de arriba la der y despues diag
         if i > 1 and j > 1 and (x[i-2] == y[j-1] and x[i-1] == y[j-2]):
             if d == min(a, b, c, d):
-                aux = ((x[i-2]+y[j-2]) , (x[i-1]+y[j-1])) #NOTA PARA MARTA DE ADRIÁN: no tendría sentido poner todas las x en un lado y las y en otro? aunque son equivalentes x-->y
+                aux = ((x[i-2]+x[i-1]) , (y[j-2]+y[j-1])) #NOTA PARA MARTA DE ADRIÁN: no tendría sentido poner todas las x en un lado y las y en otro? aunque son equivalentes x-->y
                 camino.append(aux)
                 i-=2; j-=2
                 continue
