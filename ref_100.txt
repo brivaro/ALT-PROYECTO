@@ -1,0 +1,38 @@
+  ori-  levenshtein damerau_r   damerau_i
+ginal 1   2   3   1   2   3   1   2   3 query
+----------------------------------------------------------------------
+  0  32  43  60  32  43  60  32  43  60 alexanderx
+  0   5   5  24   5   5  26   5   5  26 iluminaciónx
+  0   8  41 171  32  41 171  32  41 171 capitla
+  0   4   7  43   4  37  44   4  37  44 secuelax
+  0   0   0  98   0   0  98   0   0  98 asoman2
+  0   0  54 255   0  54 256   0  54 257 virneg
+  0   9  17  95   9  23 129   9  23 129 perwisos
+  0   0  18 153   0  18 170   0  18 170 persimos
+  0  31  31 136  31  31 136  31  31 136 limertad
+  0   0  24 198   4  34 205   4  34 205 sagardo
+  0  17  19  29  17  19  29  17  19  29 aperturaq
+  0   0  13 106   0  13 106   0  13 106 loursed
+  0  88 211 266  88 211 266  88 211 266 cuaqro
+  0  30  61 286  30  61 286  30  61 286 planrta
+ 21  21  21  20  21  20  20  21  20  20 NOT antihéroes AND ecuador
+  0   0   0   0   0   0   0   0   0   0 blindarse OR árboles AND perjuicio
+  0  13  17  23  13  17  23  13  17  23 orígenes AND aversión
+ 87  87  82  38  87  82  37  87  82  37 actualmente AND NOT reubicar
+  0   0  44 137   0  44 137   0  44 137 ventanasse OR rebuscar
+  1   2  12  34   2  14  34   2  14  34 tortuosa OR atardecer
+  3   3   3   3   3   3   3   3   3   3 NOT alexander AND iluminación
+  0   0  15  32   0  15  32   0  15  32 capital OR secuela AND asoman
+  0   0   0   0   0   0   0   0   0   0 virgen AND permisos
+ 28  28  28  28  28  28  28  28  28  28 libertad AND NOT sagrado
+ 19  19  19  19  19  19  19  19  19  19 apertura OR lourdes
+  0  21  21  55  21  21  57  21  21  57 NOT antihreoes AND ecuadorr
+  0   0   2   5   2   2   5   2   2   5 blindase OR árbolse AND perjuicioso
+  0   0   0  66   0   0  67   0   0  67 diógenes AND avrasión
+  0   0  78  56  87  78  57  87  78  57 actulamente AND NOT rubricar
+  0   0   0  23   0   0  23   0   0  23 ventanasseu OR rebuscardo
+  0   0   8  25   0   8  25   0   8  25 tortugosa OR atrasdecer
+  0   3   3  14   3   3  14   3   3  14 NOT alexanders AND iluminaciónx
+ 27  33  58 175  49  58 175  49  58 175 capitla OR escuela
+  0   0   8  88   0  14 119   0  14 119 wirgen AND perwisos
+ 31  31  31  31  31  31  31  31  31  31 libertad AND NOT sangrado
