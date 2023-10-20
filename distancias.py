@@ -351,7 +351,7 @@ def damerau_restricted(x, y, threshold=None):
         if threshold is not None and min(prev) > threshold:
             return threshold + 1
     
-    return prev[lenX] # COMPLETAR Y REEMPLAZAR ESTA PARTE
+    return min(prev[lenX],threshold+1) # COMPLETAR Y REEMPLAZAR ESTA PARTE
 
 def damerau_intermediate_matriz(x, y, threshold=None):
     # completar versión Damerau-Levenstein intermedia con matriz
