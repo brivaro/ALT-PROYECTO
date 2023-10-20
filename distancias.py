@@ -176,7 +176,7 @@ def levenshtein(x, y, threshold):
         if threshold is not None and min(prev) > threshold: 
             return threshold + 1
 
-    return prev[lenX]
+    return min(prev[lenX],threshold+1)
     
 
 def levenshtein_cota_optimista(x, y, threshold):
