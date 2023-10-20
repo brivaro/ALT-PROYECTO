@@ -175,7 +175,7 @@ def levenshtein(x, y, threshold):
         # no da bien pero es porque el profe ha hecho las pruebas con >= que es lo que ponía en las traspas
         if threshold is not None and min(prev) > threshold: 
             return threshold + 1
-
+    # tenemos que comprobar si el valor del último pudiera superar el threshold+1, tenemos que poner esto en todos los lugares que utilicemos threshold
     return min(prev[lenX],threshold+1)
     
 
