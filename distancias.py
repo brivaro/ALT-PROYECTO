@@ -547,7 +547,8 @@ def damerau_intermediate(x, y, threshold=None):
         if threshold is not None and min(prev) > threshold:
             return threshold + 1
 
-    return prev[lenX]
+     
+    return min(prev[lenX],threshold+1)  ##DUDA: no se si va con el min o sin el min los resultados son los mismos
 
 opcionesSpell = {
     'levenshtein_m': levenshtein_matriz,
