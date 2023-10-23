@@ -62,18 +62,11 @@ class SAR_Indexer:
         self.show_all = False # valor por defecto, se cambia con self.set_showall()
         self.show_snippet = False # valor por defecto, se cambia con self.set_snippet()
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
+       
         # ALT - COMPLETAR
-        #
-        
         self.use_spelling = False
         self.speller = None
-        
-        #
-        #
-        #
-        #
-        #
-        #
+       
 
     ###############################
     ###                         ###
@@ -191,9 +184,6 @@ class SAR_Indexer:
         self.stemming = args['stem']
         self.permuterm = args['permuterm']
 
-        #
-        #args['distance']
-
         file_or_dir = Path(root)
         
         if file_or_dir.is_file():
@@ -257,7 +247,7 @@ class SAR_Indexer:
         self.docs[docid] = filename
         for i, line in enumerate(open(filename, encoding='utf8')):
             j = self.parse_article(line)
-            #print(j['url'])
+            
             if self.already_in_index(j):
                 continue
             artid = len(self.articles)
@@ -266,7 +256,7 @@ class SAR_Indexer:
             
             # ADD token in 'all' field to the index
             index = self.index.setdefault('all', {})
-            #for token in set(self.tokenize(j['all'])):
+            
             for token in self.tokenize(j['all']):
                 if token not in index:
                     index[token] = [artid]
@@ -301,23 +291,9 @@ class SAR_Indexer:
         """
         
         # ALT - COMPLETAR  
-        # #
-        # 
-        self.use_spelling = use_spelling    
-        #print(opcionesSpell)
-        #print("----------------------------------\n")
-        print(len(list(self.index["all"].keys())))     
-        self.speller = SpellSuggester(opcionesSpell,list(self.index["all"].keys()),distance,threshold)    #vocab es una lista de palabras o la ruta de un fichero DUDA
-        # 
-        # 
-        # 
-        # 
-        # 
-        # 
-        # 
-        # 
-        # 
-        #       
+        self.use_spelling = use_spelling       
+        self.speller = SpellSuggester(opcionesSpell,list(self.index["all"].keys()),distance,threshold)
+            
         
 
     def tokenize(self, text:str):

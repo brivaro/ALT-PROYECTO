@@ -13,7 +13,7 @@ def testear_suggester():
     ]
     spellsuggester = SpellSuggester(
         dist_functions = opcionesSpell,
-        vocab = "./corpora/miniquijote.txt") #DUDA: a veces ejecutar este archivo desde vss da error porq no encuentra el miniquijote.txt
+        vocab = "./corpora/miniquijote.txt")
     for dstname in opcionesSpell.keys():
         print(dstname)
         with open(f'{carpeta}/test_suggester_{dstname}.txt','w',
